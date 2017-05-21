@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
@@ -27,15 +26,13 @@ import org.owntracks.android.App;
 import org.owntracks.android.R;
 import org.owntracks.android.activities.ActivityWelcome;
 import org.owntracks.android.messages.MessageLocation;
-import org.owntracks.android.messages.MessageNotification;
-import org.owntracks.android.messages.MessageNotificationAction;
 import org.owntracks.android.messages.MessageTransition;
 import org.owntracks.android.model.FusedContact;
 import org.owntracks.android.support.Events;
 import org.owntracks.android.support.GeocodingProvider;
 import org.owntracks.android.support.Preferences;
-import org.owntracks.android.support.interfaces.ProxyableService;
 import org.owntracks.android.support.widgets.Toasts;
+import org.owntracks.android.support.interfaces.ProxyableService;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,13 +40,10 @@ import java.util.concurrent.TimeUnit;
 
 import timber.log.Timber;
 
-import static org.owntracks.android.services.ServiceProxy.KEY_SERVICE_ID;
-
-public class ServiceNotification
-          implements ProxyableService {
+public class ServiceNotification implements ProxyableService {
     public static final String INTENT_ACTION_CANCEL_EVENT_NOTIFICATION = "org.owntracks.android.intent.INTENT_ACTION_CANCEL_EVENT_NOTIFICATION";
     public static final String INTENT_ACTION_CANCEL_MESSAGE_NOTIFICATION = "org.owntracks.android.intent.INTENT_ACTION_CANCEL_MESSAGE_NOTIFICATION"; //unused for now
-    private static final String TAG = "ServiceNotification";
+    private static final String TAG ="ServiceNotification" ;
     private static final String GROUP_KEY_EVENTS = "events";
 
     private ServiceProxy context;
@@ -66,7 +60,6 @@ public class ServiceNotification
     // Event notification
     private static final int NOTIFICATION_ID_EVENTS_GROUP = 2;
     private int notificationIdEvents = 3;
-    private int pendingNotificationIdEvents = 900;
     private NotificationCompat.Builder notificationBuilderEvents;
     private NotificationCompat.Builder notificationBuilderEventsGroup;
 

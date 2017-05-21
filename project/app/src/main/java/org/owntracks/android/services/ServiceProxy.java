@@ -240,11 +240,7 @@ public class ServiceProxy extends Service {
 				PendingIntent.FLAG_CANCEL_CURRENT);
 	}
 
-    public static PendingIntent getPendingIntentForService(Context c, int targetServiceId, String action, Bundle extras, int flags) {
-        return getPendingIntentForService(c, targetServiceId, 0, action, extras, flags);
-    }
-
-	public static PendingIntent getPendingIntentForService(Context c, int targetServiceId, int requestCode, String action, Bundle extras, int flags) {
+	public static PendingIntent getPendingIntentForService(Context c, int targetServiceId, String action, Bundle extras, int flags) {
 		Intent i = new Intent().setClass(c, ServiceProxy.class);
 		i.setAction(action);
 
@@ -252,7 +248,7 @@ public class ServiceProxy extends Service {
 			i.putExtras(extras);
 		i.putExtra(KEY_SERVICE_ID, targetServiceId);
 
-		return PendingIntent.getService(c, requestCode, i, flags);
+		return PendingIntent.getService(c, 0, i, flags);
 
 	}
 

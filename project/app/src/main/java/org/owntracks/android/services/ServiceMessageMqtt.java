@@ -38,7 +38,6 @@ import org.owntracks.android.messages.MessageClear;
 import org.owntracks.android.messages.MessageCmd;
 import org.owntracks.android.messages.MessageEvent;
 import org.owntracks.android.messages.MessageLocation;
-import org.owntracks.android.messages.MessageNotificationAction;
 import org.owntracks.android.messages.MessageTransition;
 import org.owntracks.android.messages.MessageWaypoint;
 import org.owntracks.android.messages.MessageWaypoints;
@@ -71,7 +70,6 @@ public class ServiceMessageMqtt implements OutgoingMessageProcessor, RejectedExe
     private static final String RECEIVER_ACTION_PING = "org.owntracks.android.RECEIVER_ACTION_PING";
 	public static final String RECEIVER_ACTION_CLEAR_CONTACT_EXTRA_TOPIC = "RECEIVER_ACTION_CLEAR_CONTACT_EXTRA_TOPIC" ;
 	public static final String RECEIVER_ACTION_CLEAR_CONTACT = "RECEIVER_ACTION_CLEAR_CONTACT";
-	public static final String RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION = "org.owntracks.android.RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION";
 
 	private static final int MAX_INFLIGHT_MESSAGES = 10;
 
@@ -164,10 +162,6 @@ public class ServiceMessageMqtt implements OutgoingMessageProcessor, RejectedExe
 		publishMessage(m, message);
 	}
 
-	@Override
-	public void processOutgoingMessage(MessageNotificationAction message) {
-		publishMessage(message);
-	}
 
 	private IMqttActionListener iCallbackPublish = new IMqttActionListener() {
 
@@ -250,18 +244,6 @@ public class ServiceMessageMqtt implements OutgoingMessageProcessor, RejectedExe
 		MqttMessage m = new MqttMessage();
 		try {
 			m.setPayload(Parser.toJson(message).getBytes());
-			m.setQos(message.getQos());
-			m.setRetained(message.getRetained());
-			publishMessage(m, message);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void publishMessage(MessageNotificationAction message) {
-		MqttMessage m = new MqttMessage();
-		try {
-			m.setPayload(message.getData().getBytes());
 			m.setQos(message.getQos());
 			m.setRetained(message.getRetained());
 			publishMessage(m, message);
@@ -381,10 +363,6 @@ public class ServiceMessageMqtt implements OutgoingMessageProcessor, RejectedExe
 			mInfo.setTopic(topic+MessageCard.BASETOPIC_SUFFIX);
 			sendMessage(mInfo);
 
-		} else if (ServiceMessageMqtt.RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION.equals(intent.getAction())) {
-			MessageNotificationAction message = MessageNotificationAction.fromIntent(intent);
-			sendMessage(message);
-			ServiceProxy.getServiceNotification().cancelNotification(message.getNotifiationId());
 		}
 
 
