@@ -27,6 +27,8 @@ import org.owntracks.android.App;
 import org.owntracks.android.R;
 import org.owntracks.android.activities.ActivityWelcome;
 import org.owntracks.android.messages.MessageLocation;
+import org.owntracks.android.messages.MessageNotification;
+import org.owntracks.android.messages.MessageNotificationAction;
 import org.owntracks.android.messages.MessageTransition;
 import org.owntracks.android.model.FusedContact;
 import org.owntracks.android.support.Events;
@@ -236,6 +238,58 @@ public class ServiceNotification
 
         notificationBuilderOngoing.setSmallIcon(R.drawable.ic_notification).setContentText(subtitle);
         this.context.startForeground(NOTIFICATION_ID_ONGOING, notificationBuilderOngoing.build());
+    }
+
+    public void addNotificationEvents(MessageNotification message) {
+        if (!Preferences.getNotificationEvents()) {
+            return;
+        }
+
+        android.support.v4.app.NotificationCompat.Builder builder =
+                  new android.support.v4.app.NotificationCompat.Builder(context)
+                            .setColor(ContextCompat.getColor(context,
+                                                             R.color.primary))
+                            .setPriority(Notification.PRIORITY_MIN)
+                            .setCategory(Notification.CATEGORY_SERVICE)
+                            .setSmallIcon(R.drawable.ic_notification)
+                            .extend(new android.support.v4.app.NotificationCompat.WearableExtender())
+                            .setAutoCancel(true)
+                            .setShowWhen(false)
+                            .setPriority(android.support.v4.app.NotificationCompat.PRIORITY_MAX)
+                            .setCategory(android.support.v4.app.NotificationCompat.CATEGORY_MESSAGE)
+                            .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                            .setVibrate(new long[] {100, 500})
+                            .setVisibility(android.support.v4.app.NotificationCompat.VISIBILITY_PUBLIC)
+                            .setContentTitle(message.getTitle())
+                            .setContentText(message.getContent());
+
+        int notificationId = ++notificationIdEvents;
+        for (MessageNotificationAction action : message.getActions()) {
+            ++pendingNotificationIdEvents;
+            Bundle bundle = new Bundle();
+            bundle.putString(MessageNotificationAction.EXTRA_TOPIC,
+                             action.getTopic());
+            bundle.putBoolean(MessageNotificationAction.EXTRA_RETAIN,
+                              action.getRetained());
+            bundle.putString(MessageNotificationAction.EXTRA_DATA,
+                             action.getData());
+            bundle.putInt(KEY_SERVICE_ID,
+                          ServiceProxy.SERVICE_MESSAGE);
+            bundle.putInt(MessageNotificationAction.EXTRA_NOTIFIATION_ID,
+                          notificationId);
+            PendingIntent pendingIntent =
+                      ServiceProxy.getPendingIntentForService(this.context,
+                                                              ServiceProxy.SERVICE_MESSAGE,
+                                                              pendingNotificationIdEvents,
+                                                              ServiceLocator.RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION,
+                                                              bundle,
+                                                              PendingIntent.FLAG_ONE_SHOT);
+            builder.addAction(0,
+                              action.getTitle(),
+                              pendingIntent);
+        }
+        notificationManager.notify(notificationId,
+                                   builder.build());
     }
 
 
