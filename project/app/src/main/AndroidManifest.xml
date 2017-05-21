@@ -36,6 +36,8 @@
     <!-- To access Google Play Services -->
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
 
     <application
         android:name=".App"
@@ -186,6 +188,7 @@
                 <action android:name="org.owntracks.android.RECEIVER_ACTION_PING" />
                 <action android:name="org.owntracks.android.RECEIVER_ACTION_GEOFENCE_TRANSITION" />
                 <action android:name="org.owntracks.android.RECEIVER_ACTION_PUBLISH_LASTKNOWN" />
+                <action android:name="org.owntracks.android.RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION"/>
             </intent-filter>
         </receiver>
 

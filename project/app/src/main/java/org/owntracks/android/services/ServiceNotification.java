@@ -375,6 +375,10 @@ public class ServiceNotification
         }
     }
 
+    public void cancelNotification(int notificationId) {
+        notificationManager.cancel(notificationId);
+    }
+
     public void onMessageLocationGeocoderResult(MessageLocation m) {
         Timber.v("for location: %s", m.getGeocoder());
         if (m == notificationOngoingLastLocationCache) {

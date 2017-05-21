@@ -23,6 +23,7 @@ public class MessageCmd extends MessageBase{
     private static final String BASETOPIC_SUFFIX = "/cmd";
     private String action;
     public static final String ACTION_REPORT_LOCATION = "reportLocation";
+    public static final String ACTION_DISPLAY_NOTIFICATION = "notify";
     public static final String ACTION_SET_WAYPOINTS = "setWaypoints";
     public static final String ACTION_SET_CONFIGURATION = "setConfiguration";
     public static final String ACTION_SET_WAYPOINTS_KEY_WAYPOINTS = "waypoints";
@@ -32,6 +33,7 @@ public class MessageCmd extends MessageBase{
     private MessageWaypointCollection waypoints;
     private Map<String,Object> map = new HashMap<>();
     private MessageConfiguration configuration;
+    private MessageNotification notification;
 
     @JsonAnyGetter
     public Map<String,Object> any() {
@@ -73,12 +75,20 @@ public class MessageCmd extends MessageBase{
         this.configuration = m;
     }
 
+    public void setNotification(MessageNotification m) {
+        this.notification = m;
+    }
+
     public MessageWaypointCollection getWaypoints() {
         return waypoints;
     }
 
     public MessageConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public MessageNotification getNotification() {
+        return notification;
     }
 
     public void setAction(String action) {
