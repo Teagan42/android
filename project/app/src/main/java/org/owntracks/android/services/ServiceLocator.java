@@ -12,6 +12,7 @@ import org.owntracks.android.db.Dao;
 import org.owntracks.android.db.Waypoint;
 import org.owntracks.android.db.WaypointDao;
 import org.owntracks.android.messages.MessageLocation;
+import org.owntracks.android.messages.MessageNotificationAction;
 import org.owntracks.android.messages.MessageTransition;
 import org.owntracks.android.messages.MessageWaypoint;
 import org.owntracks.android.messages.MessageWaypoints;
@@ -56,6 +57,7 @@ public class ServiceLocator implements ProxyableService, GoogleApiClient.Connect
     public static final String RECEIVER_ACTION_GEOFENCE_TRANSITION = "org.owntracks.android.RECEIVER_ACTION_GEOFENCE_TRANSITION";
     public static final String RECEIVER_ACTION_GEOFENCE_TRANSITION_LOOKUP = "org.owntracks.android.RECEIVER_ACTION_GEOFENCE_TRANSITION_LOOKUP";
     public static final String RECEIVER_ACTION_PUBLISH_LASTKNOWN_MANUAL = "org.owntracks.android.RECEIVER_ACTION_PUBLISH_LASTKNOWN_MANUAL";
+    public static final String RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION = "org.owntracks.android.RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION";
 
 
     private GoogleApiClient googleApiClient;
@@ -147,6 +149,12 @@ public class ServiceLocator implements ProxyableService, GoogleApiClient.Connect
 
 		return this.lastKnownLocation;
 	}
+
+	private void onNotificationAction(Intent intent) {
+        MessageNotificationAction message = MessageNotificationAction.fromIntent(intent);
+
+        ServiceProxy.getServiceMessage().sendMessage(message);
+    }
 
     @SuppressWarnings("MissingPermission")
     private void onFenceTransition(Intent intent) {
@@ -348,6 +356,8 @@ public class ServiceLocator implements ProxyableService, GoogleApiClient.Connect
             onFenceTransition(intent);
         } else if (ServiceLocator.RECEIVER_ACTION_GEOFENCE_TRANSITION_LOOKUP.equals(intent.getAction())) {
             //onEnsuredFenceTransition(intent);
+        } else if (ServiceLocator.RECEIVER_ACTION_PUBLISH_NOTIFICATION_ACTION.equals(intent.getAction())) {
+            onNotificationAction(intent);
         } else {
             Timber.e("received unknown intent action");
         }

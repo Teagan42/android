@@ -22,6 +22,7 @@ import org.owntracks.android.messages.MessageClear;
 import org.owntracks.android.messages.MessageCmd;
 import org.owntracks.android.messages.MessageEvent;
 import org.owntracks.android.messages.MessageLocation;
+import org.owntracks.android.messages.MessageNotificationAction;
 import org.owntracks.android.messages.MessageTransition;
 import org.owntracks.android.messages.MessageWaypoint;
 import org.owntracks.android.messages.MessageWaypoints;
@@ -165,11 +166,23 @@ public class ServiceMessageHttp implements StatelessMessageEndpoint, OutgoingMes
 
     }
 
+    private void postMessage(MessageNotificationAction message) {
+        postMessage(message, message.getData());
+    }
+
     private void postMessage(MessageBase message) {
-
         try {
+            postMessage(message,
+                        Parser.toJson(message));
+        }  catch (Exception e) {
+            e.printStackTrace();
+            service.onMessageDeliveryFailed(message.getMessageId());
 
-            String wireMessage = Parser.toJson(message);
+        }
+    }
+
+    private void postMessage(MessageBase message, String wireMessage) {
+        try {
 
             Timber.d("outgoing message:%s", wireMessage);
             boolean idleMode =  false;
@@ -371,6 +384,11 @@ e.printStackTrace();                } catch (Parser.EncryptionException e) {
 
     @Override
     public void processOutgoingMessage(MessageClear message) { /*not supported */}
+
+    @Override
+    public void processOutgoingMessage(MessageNotificationAction message) {
+        postMessage(message);
+    }
 
     @Override
     public void onSetService(ServiceMessage service) {

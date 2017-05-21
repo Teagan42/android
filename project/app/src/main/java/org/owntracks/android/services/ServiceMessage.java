@@ -15,6 +15,7 @@ import org.owntracks.android.messages.MessageCard;
 import org.owntracks.android.messages.MessageClear;
 import org.owntracks.android.messages.MessageCmd;
 import org.owntracks.android.messages.MessageLocation;
+import org.owntracks.android.messages.MessageNotification;
 import org.owntracks.android.messages.MessageTransition;
 import org.owntracks.android.messages.MessageUnknown;
 import org.owntracks.android.support.Events;
@@ -297,6 +298,9 @@ public class ServiceMessage implements ProxyableService, IncomingMessageProcesso
                 break;
             case MessageCmd.ACTION_SET_CONFIGURATION:
                 Preferences.importFromMessage(message.getConfiguration());
+                break;
+            case MessageCmd.ACTION_DISPLAY_NOTIFICATION:
+                ServiceProxy.getServiceNotification().addNotificationEvents(message.getNotification());
                 break;
         }
     }
